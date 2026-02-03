@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noor Opticals Invoice</title>
+    <style>
+        /* ==========================================================================
+           الإعدادات العامة
+           ========================================================================== */
+        body {
+            font-family: 'Tahoma', 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            transition: all 0.3s ease;
+        }
+
+        .ticket {
+            width: 80mm;
+            max-width: 80mm;
+            margin: 20px auto;
+            background: #fff;
+            padding: 10px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+
+        h1, h2, h3, p { margin: 5px 0; color: #000; }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .logo-text { font-size: 24px; font-weight: bold; display: block; }
+        .sub-logo { font-size: 14px; }
+
+        .info-section {
+            font-size: 12px;
+            margin-bottom: 10px;
+            border-bottom: 1px dashed #000;
+            padding-bottom: 5px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        /* تنسيق المدخلات */
+        select, input[type="number"], input[type="text"] {
+            font-family: inherit;
+            font-size: 12px;
+            border: 1px solid #ccc;
+            padding: 2px 5px;
+            border-radius: 3px;
+            background-color: #fff;
+            font-weight: bold;
+        }
+
+        select { text-align: center; cursor: pointer; }
+        
+        .price-input { width: 80px; text-align: center; }
+        .invoice-num-input { width: 100px; text-align: inherit; } 
+        .employee-input { width: 140px; text-align: inherit; }
+
+        /* تنسيق الجدول */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 12px;
+        }
+
+        th, td { border: 1px solid #000; padding: 5px; text-align: center; }
+        th { background-color: #eee; }
+        
+        td.measurement-cell { width: 35%; }
+        td select { width: 100%; }
+
+        .details-section { font-size: 12px; margin-top: 10px; }
+        
+        /* ضبط المحاذاة بناءً على اللغة */
+        body[dir="rtl"] .details-section { text-align: right; }
+        body[dir="ltr"] .details-section { text-align: left; }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .lens-select { width: 60%; text-align: inherit; }
+
+        .total-row {
+            border-top: 1px solid #000;
+            padding-top: 5px;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            padding-top: 10px;
+            border-top: 1px dashed #000;
+        }
+
+        .signature-box {
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 10px;
+        }
+        
+        .signature-line {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* أزرار التحكم (طباعة + لغة) */
+        .controls {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            color: white;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+        .print-btn { background-color: #007bff; }
+        .lang-btn { background-color: #28a745; }
+
+        /* إخفاء أسهم الأرقام */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+
+        /* ==========================================================================
+           إعدادات الطباعة
+           ========================================================================== */
+        @media print {
+            @page { size: 80mm auto; margin: 0; }
+            body { background-color: #fff; margin: 0; }
+            .ticket { width: 100%; max-width: 100%; margin: 0; padding: 5px; box-shadow: none; border: none; }
+            .controls { display: none !important; } /* إخفاء الأزرار */
+            
+            select, input {
+                border: none !important;
+                background: transparent !important;
+                padding: 0;
+                appearance: none;
+            }
+            
+            input::placeholder { color: transparent; }
+            
+            /* ضبط اتجاه النصوص عند الطباعة */
+            .price-input { text-align: inherit; }
+            body[dir="ltr"] .price-input { text-align: left; }
+            body[dir="rtl"] .price-input { text-align: left; direction: ltr; } /* الأرقام دائماً يسار لليمين */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ticket">
+        <div class="controls">
+            <button class="btn lang-btn" onclick="toggleLanguage()">English / عربي</button>
+            <button class="btn print-btn" onclick="window.print()" data-i18n="print_btn">طباعة الفاتورة</button>
+        </div>
+
+        <div class="header">
+            <span class="logo-text">NOOR Opticals</span>
+            <span class="sub-logo">نـــور للنظارات</span>
+            <h3 data-i18n="invoice_title">فاتورة طلب عدسات</h3>
+        </div>
+
+        <div class="info-section">
+            <div class="info-row">
+                <label data-i18n="invoice_num">رقم الفاتورة:</label>
+                <input type="text" class="invoice-num-input" placeholder="0001">
+            </div>
+
+            <div class="info-row">
+                <label data-i18n="branch">الفرع:</label>
+                <select style="width: auto;">
+                    <option value="Noor 1">Noor 1</option>
+                    <option value="Noor 2">Noor 2</option>
+                    <option value="Noor 3" selected>Noor 3</option>
+                    <option value="Noor 4">Noor 4</option>
+                </select>
+            </div>
+            <div class="info-row">
+                <span><span data-i18n="date">التاريخ:</span> <span id="current-date"></span></span>
+                <span><span data-i18n="time">الوقت:</span> <span id="current-time"></span></span>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th data-i18n="eye_header">العين</th>
+                    <th>SPH</th>
+                    <th>CYL</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td data-i18n="right_eye">R (يمين)</td>
+                    <td class="measurement-cell"><select class="diopter-select"></select></td>
+                    <td class="measurement-cell"><select class="diopter-select"></select></td>
+                </tr>
+                <tr>
+                    <td data-i18n="left_eye">L (يسار)</td>
+                    <td class="measurement-cell"><select class="diopter-select"></select></td>
+                    <td class="measurement-cell"><select class="diopter-select"></select></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="details-section">
+            <div class="detail-row">
+                <strong data-i18n="lens_type">نوع العدسة:</strong>
+                <select class="lens-select">
+                    <option value="Multi Coated">Multi Coated</option>
+                    <option value="Blue Cut">Blue Cut</option>
+                    <option value="Anti-Reflection">Anti-Reflection</option>
+                    <option value="Photochromic">Photochromic</option>
+                    <option value="Bifocal">Bifocal</option>
+                    <option value="Progressive">Progressive</option>
+                    <option value="Single Vision">Single Vision</option>
+                    <option value="High Index">High Index</option>
+                    <option value="Polycarbonate">Polycarbonate</option>
+                    <option value="Contact Lenses">Contact Lenses</option>
+                    <option value="Glass">Glass</option>
+                    <option value="Other">Other...</option>
+                </select>
+            </div>
+            
+            <div class="detail-row">
+                <strong data-i18n="lens_price">سعر العدسة:</strong>
+                <input type="number" id="lens-price" class="price-input" placeholder="0" oninput="calculateTotal()">
+            </div>
+            
+            <div class="detail-row">
+                <strong data-i18n="install_price">سعر التركيب:</strong>
+                <input type="number" id="install-price" class="price-input" placeholder="0" oninput="calculateTotal()">
+            </div>
+
+            <div class="detail-row total-row">
+                <strong data-i18n="total">الإجمالي:</strong>
+                <input type="text" id="total-price" class="price-input" value="0" readonly style="font-weight: bold;">
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="signature-box">
+                <strong data-i18n="employee">اسم الموظف:</strong>
+                <input type="text" class="employee-input" id="emp-input" placeholder="اكتب الاسم هنا...">
+            </div>
+            
+            <br>
+            
+            <div class="signature-line">
+                <strong data-i18n="signature">التوقيع:</strong>
+                <span>.........................</span>
+            </div>
+            
+            <p style="margin-top: 15px;" data-i18n="thanks">شكراً لزيارتكم</p>
+        </div>
+    </div>
+
+    <script>
+        // 1. قاموس الترجمات
+        const translations = {
+            ar: {
+                dir: "rtl",
+                print_btn: "طباعة الفاتورة",
+                invoice_title: "فاتورة طلب عدسات",
+                invoice_num: "رقم الفاتورة:",
+                branch: "الفرع:",
+                date: "التاريخ:",
+                time: "الوقت:",
+                eye_header: "العين",
+                right_eye: "R (يمين)",
+                left_eye: "L (يسار)",
+                lens_type: "نوع العدسة:",
+                lens_price: "سعر العدسة:",
+                install_price: "سعر التركيب:",
+                total: "الإجمالي:",
+                employee: "اسم الموظف:",
+                signature: "التوقيع:",
+                thanks: "شكراً لزيارتكم",
+                emp_placeholder: "اكتب الاسم هنا..."
+            },
+            en: {
+                dir: "ltr",
+                print_btn: "Print Invoice",
+                invoice_title: "Lens Order Invoice",
+                invoice_num: "Invoice No:",
+                branch: "Branch:",
+                date: "Date:",
+                time: "Time:",
+                eye_header: "Eye",
+                right_eye: "R (Right)",
+                left_eye: "L (Left)",
+                lens_type: "Lens Type:",
+                lens_price: "Lens Price:",
+                install_price: "Install Price:",
+                total: "Total:",
+                employee: "Employee:",
+                signature: "Signature:",
+                thanks: "Thank You for Visiting",
+                emp_placeholder: "Enter Name..."
+            }
+        };
+
+        let currentLang = 'ar'; // اللغة الافتراضية
+
+        // دالة تبديل اللغة
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            const t = translations[currentLang];
+
+            // 1. تغيير اتجاه الصفحة
+            document.documentElement.setAttribute('dir', t.dir);
+            document.documentElement.lang = currentLang;
+
+            // 2. تحديث النصوص بناءً على data-i18n
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (t[key]) {
+                    element.innerText = t[key];
+                }
+            });
+
+            // 3. تحديث الـ placeholders (مثل اسم الموظف)
+            const empInput = document.getElementById('emp-input');
+            if(empInput) empInput.placeholder = t.emp_placeholder;
+        }
+
+        // ==========================================
+        // باقي الكود (التاريخ، التوليد، الحساب)
+        // ==========================================
+
+        const now = new Date();
+        document.getElementById('current-date').innerText = now.toLocaleDateString('en-GB');
+        document.getElementById('current-time').innerText = now.toLocaleTimeString('en-US', { hour12: false });
+
+        function generateOptions() {
+            let options = "";
+            for (let i = 6.00; i >= -6.00; i -= 0.25) {
+                let val = i.toFixed(2);
+                let sign = i > 0 ? "+" : "";
+                let text = sign + val;
+                let selected = (Math.abs(i) < 0.001) ? "selected" : ""; 
+                options += `<option value="${text}" ${selected}>${text}</option>`;
+            }
+            return options;
+        }
+
+        const selects = document.querySelectorAll('.diopter-select');
+        const optionsHTML = generateOptions();
+        selects.forEach(select => {
+            select.innerHTML = optionsHTML;
+        });
+
+        function calculateTotal() {
+            const lensPrice = parseFloat(document.getElementById('lens-price').value) || 0;
+            const installPrice = parseFloat(document.getElementById('install-price').value) || 0;
+            const total = lensPrice + installPrice;
+            document.getElementById('total-price').value = total;
+        }
+    </script>
+
+</body>
+</html>
