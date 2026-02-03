@@ -24,15 +24,22 @@
             min-height: 100vh;
         }
 
+        /* تنسيق اللوجو */
+        .logo-img {
+            max-width: 150px;
+            height: auto;
+            margin-bottom: 5px;
+        }
+
         /* الفاتورة الحالية */
         .ticket {
             border: 1px solid #ddd;
             padding: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             background: #fff;
         }
 
-        /* تنسيق جدول الملخص (الجديد) */
+        /* تنسيق جدول الملخص */
         .summary-section {
             margin-top: 20px;
             border-top: 2px solid #333;
@@ -68,19 +75,17 @@
             font-size: 10px;
         }
 
-        /* منطقة الطباعة المخفية (تحتوي على الفواتير الكاملة) */
+        /* منطقة الطباعة المخفية */
         #hidden-print-area {
             display: none;
         }
 
-        /* الفواتير داخل التقرير اليومي */
         .saved-ticket {
             border-bottom: 2px dashed #000;
             padding: 15px 0;
             display: block;
         }
 
-        /* النصوص والعناوين */
         h3, p { margin: 5px 0; color: #000; }
         
         .header {
@@ -107,7 +112,6 @@
             margin-bottom: 5px;
         }
 
-        /* المدخلات */
         select, input[type="number"], input[type="text"] {
             font-family: 'Tahoma', 'Arial', sans-serif;
             font-size: 12px;
@@ -123,13 +127,10 @@
         .invoice-num-input { width: 100px; text-align: inherit; } 
         .employee-select { width: 140px; text-align: inherit; font-weight: bold; }
 
-        /* الجدول */
         table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12px; }
         th, td { border: 1px solid #000; padding: 5px; text-align: center; }
         th { background-color: #eee; font-weight: bold; }
-        td select { width: 100%; }
 
-        /* التفاصيل والإجمالي */
         .details-section { font-size: 13px; margin-top: 10px; font-weight: bold; }
         body[dir="rtl"] .details-section { text-align: right; }
         body[dir="ltr"] .details-section { text-align: left; }
@@ -157,11 +158,18 @@
             border-top: 1px dashed #000;
         }
 
-        .signature-box { margin-top: 15px; display: flex; align-items: center; justify-content: flex-start; gap: 10px; }
         .signature-line { margin-top: 20px; display: flex; justify-content: space-between; }
 
-        /* الأزرار */
-        .controls { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        /* الأزرار تحت الفاتورة */
+        .controls { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            margin-top: 20px; 
+            background: #fdfdfd;
+            padding: 10px;
+            border: 1px solid #eee;
+        }
         .btn {
             display: block; width: 100%; padding: 12px; color: white; text-align: center;
             border: none; cursor: pointer; font-size: 14px; border-radius: 4px;
@@ -172,66 +180,25 @@
         .clear-btn { background-color: #dc3545; font-size: 12px; padding: 8px; }
         .lang-btn { background-color: #6c757d; font-size: 12px; padding: 8px; }
 
-        /* إخفاء الأسهم */
-        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        
-        /* ==========================================================================
-           إعدادات الطباعة (الذكية)
-           ========================================================================== */
         @media print {
             @page { size: 80mm auto; margin: 0; }
             body { background-color: #fff; margin: 0; }
             .main-container { width: 100%; margin: 0; box-shadow: none; border: none; }
-            .controls { display: none !important; } 
-            .ticket { border: none; margin: 0; } 
-            
-            select, input { border: none !important; background: transparent !important; padding: 0; appearance: none; -webkit-appearance: none; }
-            .employee-select, select { text-indent: 1px; text-overflow: ''; }
-            input::placeholder { color: transparent; }
-            
-            .price-input { text-align: inherit; }
-            body[dir="ltr"] .price-input { text-align: left; }
-            body[dir="rtl"] .price-input { text-align: left; direction: ltr; }
-            
-            .delete-btn { display: none !important; } /* إخفاء زر الحذف في الطباعة */
-
-            /* --- منطق الطباعة --- */
-            
-            /* الوضع 1: طباعة الفاتورة الحالية فقط */
-            body:not(.printing-report) .summary-section { display: none !important; }
+            .controls, .delete-btn, .summary-section { display: none !important; } 
+            select, input { border: none !important; background: transparent !important; appearance: none; -webkit-appearance: none; }
             body:not(.printing-report) #hidden-print-area { display: none !important; }
-            body:not(.printing-report) #current-ticket-area { display: block !important; }
-
-            /* الوضع 2: طباعة التقرير اليومي (الفواتير الكاملة) */
             body.printing-report #current-ticket-area { display: none !important; }
-            body.printing-report .summary-section { display: none !important; }
             body.printing-report #hidden-print-area { display: block !important; }
-            
-            body.printing-report .saved-ticket {
-                page-break-after: always;
-                display: block !important;
-                border-bottom: 1px dashed #000;
-                margin-bottom: 20px;
-            }
         }
     </style>
 </head>
 <body>
 
 <div class="main-container">
-    <div class="controls">
-        <button class="btn print-current-btn" onclick="printAndSave()">🖨️ طباعة وحفظ الفاتورة</button>
-        
-        <div style="display: flex; gap: 5px;">
-            <button class="btn print-daily-btn" onclick="printDailyReport()" data-i18n="print_all_btn">📑 طباعة التقرير اليومي (<span id="count">0</span>)</button>
-            <button class="btn lang-btn" onclick="toggleLanguage()">EN/AR</button>
-        </div>
-        
-        <button class="btn clear-btn" onclick="clearArchive()" data-i18n="clear_btn">⚠️ مسح السجل (يوم جديد)</button>
-    </div>
-
+    
     <div id="current-ticket-area" class="ticket">
         <div class="header">
+            <img src="logo.png" alt="Noor Logo" class="logo-img" onerror="this.style.display='none'">
             <span class="logo-text">NOOR Opticals</span>
             <span class="sub-logo">نـــور للنظارات</span>
             <h3 data-i18n="invoice_title">فاتورة طلب عدسات</h3>
@@ -269,13 +236,13 @@
             <tbody>
                 <tr>
                     <td data-i18n="right_eye">R (يمين)</td>
-                    <td class="measurement-cell"><select id="r-sph" class="diopter-select"></select></td>
-                    <td class="measurement-cell"><select id="r-cyl" class="diopter-select"></select></td>
+                    <td><select id="r-sph" class="diopter-select"></select></td>
+                    <td><select id="r-cyl" class="diopter-select"></select></td>
                 </tr>
                 <tr>
                     <td data-i18n="left_eye">L (يسار)</td>
-                    <td class="measurement-cell"><select id="l-sph" class="diopter-select"></select></td>
-                    <td class="measurement-cell"><select id="l-cyl" class="diopter-select"></select></td>
+                    <td><select id="l-sph" class="diopter-select"></select></td>
+                    <td><select id="l-cyl" class="diopter-select"></select></td>
                 </tr>
             </tbody>
         </table>
@@ -293,7 +260,10 @@
                     <option value="Progressive">Progressive (قريب بعيد)</option>
                     <option value="Poly">Poly (ضد الكسر)</option>
                     <option value="CR39">CR39 (نورمل)</option>
-                    <option value="Other">Other...</option>
+                    <option value="Fitting Color">تركيب ملون</option>
+                    <option value="Rimless Color">تركيب تلوين بدون اطار</option>
+                    <option value="Half Rim Color">تركيب وتلوين نص اطار</option>
+                    <option value="Fitting">تركيب فقط (Installation Only)</option>
                 </select>
             </div>
             
@@ -309,22 +279,30 @@
 
             <div class="detail-row total-row">
                 <strong data-i18n="total">الإجمالي:</strong>
-                <input type="text" id="total-price" class="price-input" value="0" readonly style="font-weight: bold;">
+                <input type="text" id="total-price" class="price-input" value="0" readonly>
             </div>
         </div>
 
         <div class="footer">
-            <div class="signature-box">
+            <div class="info-row">
                 <strong data-i18n="employee">اسم الموظف:</strong>
                 <select id="emp-select" class="employee-select"></select>
             </div>
-            <br>
             <div class="signature-line">
                 <strong data-i18n="signature">التوقيع:</strong>
                 <span>.........................</span>
             </div>
             <p style="margin-top: 15px;" data-i18n="thanks">شكراً لزيارتكم</p>
         </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn print-current-btn" onclick="printAndSave()">🖨️ طباعة وحفظ الفاتورة</button>
+        <div style="display: flex; gap: 5px;">
+            <button class="btn print-daily-btn" onclick="printDailyReport()" data-i18n="print_all_btn">📑 طباعة التقرير اليومي (<span id="count">0</span>)</button>
+            <button class="btn lang-btn" onclick="toggleLanguage()">EN/AR</button>
+        </div>
+        <button class="btn clear-btn" onclick="clearArchive()" data-i18n="clear_btn">⚠️ مسح السجل (يوم جديد)</button>
     </div>
 
     <div class="summary-section">
@@ -339,19 +317,14 @@
                     <th>حذف</th>
                 </tr>
             </thead>
-            <tbody id="summary-body">
-                </tbody>
+            <tbody id="summary-body"></tbody>
         </table>
     </div>
 
     <div id="hidden-print-area"></div>
-
 </div>
 
 <script>
-    // ==========================================
-    // 1. البيانات
-    // ==========================================
     const employeesData = {
         "Noor 1": ["عمر", "سيد", "مهدي", "عبدالله الزهراني"],
         "Noor 2": ["زبير", "فواز زهراني"], 
@@ -360,160 +333,6 @@
     };
 
     let archiveCount = 0;
-    // مصفوفة لتخزين الفواتير (نستخدمها لربط الجدول بالفواتير المخفية)
-    let invoices = [];
-
-    // ==========================================
-    // 2. منطق الحفظ والطباعة
-    // ==========================================
-    function printAndSave() {
-        saveTicketToArchive();
-        window.print();
-        setTimeout(() => { clearCurrentForm(); }, 1000);
-    }
-
-    function saveTicketToArchive() {
-        const currentTicket = document.getElementById('current-ticket-area');
-        const hiddenArea = document.getElementById('hidden-print-area');
-        const summaryBody = document.getElementById('summary-body');
-        
-        // بيانات للملخص
-        const invNum = document.getElementById('inv-num').value || "-";
-        const total = document.getElementById('total-price').value;
-        const time = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute:'2-digit' });
-        const uniqueId = Date.now(); // معرف فريد
-
-        // 1. إنشاء نسخة كاملة للطباعة (تخفى حالياً)
-        const clone = currentTicket.cloneNode(true);
-        clone.removeAttribute('id'); 
-        clone.classList.add('saved-ticket');
-        clone.setAttribute('data-id', uniqueId);
-        
-        // تثبيت القيم
-        const inputs = clone.querySelectorAll('input, select');
-        inputs.forEach(input => {
-            const span = document.createElement('span');
-            span.style.fontWeight = "bold";
-            if (input.tagName === 'SELECT') {
-                span.innerText = input.options[input.selectedIndex].text;
-            } else {
-                span.innerText = input.value;
-            }
-            input.parentNode.replaceChild(span, input);
-        });
-
-        // إضافة وقت الحفظ للنسخة المطبوعة
-        const timestamp = document.createElement('div');
-        timestamp.style.fontSize = "10px";
-        timestamp.style.textAlign = "center";
-        timestamp.style.marginTop = "5px";
-        timestamp.innerText = "#" + (archiveCount + 1) + " | " + time;
-        clone.appendChild(timestamp);
-
-        hiddenArea.appendChild(clone);
-
-        // 2. إضافة صف لجدول الملخص
-        const row = document.createElement('tr');
-        row.setAttribute('data-id', uniqueId);
-        row.innerHTML = `
-            <td>${archiveCount + 1}</td>
-            <td>${invNum}</td>
-            <td style="direction: ltr;">${time}</td>
-            <td>${total}</td>
-            <td><button class="delete-btn" onclick="deleteInvoice(${uniqueId})">X</button></td>
-        `;
-        summaryBody.appendChild(row);
-        
-        archiveCount++;
-        document.getElementById('count').innerText = archiveCount;
-    }
-
-    function deleteInvoice(id) {
-        if(!confirm("حذف هذه الفاتورة؟")) return;
-
-        // حذف من الجدول
-        const row = document.querySelector(`tr[data-id="${id}"]`);
-        if(row) row.remove();
-
-        // حذف من منطقة الطباعة المخفية
-        const ticket = document.querySelector(`.saved-ticket[data-id="${id}"]`);
-        if(ticket) ticket.remove();
-
-        archiveCount--;
-        document.getElementById('count').innerText = archiveCount;
-    }
-
-    function clearCurrentForm() {
-        document.getElementById('lens-price').value = "";
-        document.getElementById('install-price').value = "";
-        document.getElementById('total-price').value = "0";
-        document.getElementById('inv-num').value = "";
-        const selects = document.querySelectorAll('#current-ticket-area .diopter-select');
-        selects.forEach(s => s.selectedIndex = 24); 
-    }
-
-    function printDailyReport() {
-        if (archiveCount === 0) {
-            alert("لا توجد فواتير اليوم!");
-            return;
-        }
-        document.body.classList.add('printing-report');
-        window.print();
-        document.body.classList.remove('printing-report');
-    }
-
-    function clearArchive() {
-        if(confirm("هل أنت متأكد من مسح السجل؟")) {
-            document.getElementById('hidden-print-area').innerHTML = "";
-            document.getElementById('summary-body').innerHTML = "";
-            archiveCount = 0;
-            document.getElementById('count').innerText = "0";
-        }
-    }
-
-    // ==========================================
-    // 3. الوظائف المساعدة
-    // ==========================================
-    function updateEmployees() {
-        const branchSelect = document.getElementById('branch-select');
-        const empSelect = document.getElementById('emp-select');
-        const selectedBranch = branchSelect.value;
-        const names = employeesData[selectedBranch] || [];
-        empSelect.innerHTML = "";
-        names.forEach(name => {
-            const option = document.createElement('option');
-            option.value = name; option.text = name; empSelect.appendChild(option);
-        });
-    }
-
-    function calculateTotal() {
-        const lensPrice = parseFloat(document.getElementById('lens-price').value) || 0;
-        const installPrice = parseFloat(document.getElementById('install-price').value) || 0;
-        document.getElementById('total-price').value = lensPrice + installPrice;
-    }
-
-    function generateOptions() {
-        let options = "";
-        for (let i = 6.00; i >= -6.00; i -= 0.25) {
-            let val = i.toFixed(2);
-            let sign = i > 0 ? "+" : "";
-            let text = sign + val;
-            let selected = (Math.abs(i) < 0.001) ? "selected" : ""; 
-            options += `<option value="${text}" ${selected}>${text}</option>`;
-        }
-        return options;
-    }
-    const selects = document.querySelectorAll('.diopter-select');
-    selects.forEach(s => s.innerHTML = generateOptions());
-
-    function updateTime() {
-        const now = new Date();
-        document.getElementById('current-date').innerText = now.toLocaleDateString('en-GB');
-        document.getElementById('current-time').innerText = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true });
-    }
-    setInterval(updateTime, 1000);
-    updateTime();
-
     const translations = {
         ar: {
             dir: "rtl",
@@ -557,27 +376,130 @@
         }
     };
     let currentLang = 'ar';
+
+    function updateEmployees() {
+        const branchSelect = document.getElementById('branch-select');
+        const empSelect = document.getElementById('emp-select');
+        const names = employeesData[branchSelect.value] || [];
+        empSelect.innerHTML = "";
+        names.forEach(name => {
+            const opt = document.createElement('option');
+            opt.value = name; opt.text = name; empSelect.appendChild(opt);
+        });
+    }
+
+    function calculateTotal() {
+        const lp = parseFloat(document.getElementById('lens-price').value) || 0;
+        const ip = parseFloat(document.getElementById('install-price').value) || 0;
+        document.getElementById('total-price').value = lp + ip;
+    }
+
+    function printAndSave() {
+        saveTicketToArchive();
+        window.print();
+        setTimeout(clearCurrentForm, 1000);
+    }
+
+    function saveTicketToArchive() {
+        const area = document.getElementById('current-ticket-area');
+        const hidden = document.getElementById('hidden-print-area');
+        const summary = document.getElementById('summary-body');
+        const invNum = document.getElementById('inv-num').value || "-";
+        const total = document.getElementById('total-price').value;
+        const time = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute:'2-digit' });
+        const id = Date.now();
+
+        const clone = area.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.classList.add('saved-ticket');
+        clone.setAttribute('data-id', id);
+
+        clone.querySelectorAll('input, select').forEach(el => {
+            const span = document.createElement('span');
+            span.style.fontWeight = "bold";
+            span.innerText = el.tagName === 'SELECT' ? el.options[el.selectedIndex].text : el.value;
+            el.parentNode.replaceChild(span, el);
+        });
+
+        hidden.appendChild(clone);
+        summary.innerHTML += `
+            <tr data-id="${id}">
+                <td>${archiveCount + 1}</td>
+                <td>${invNum}</td>
+                <td>${time}</td>
+                <td>${total}</td>
+                <td><button class="delete-btn" onclick="deleteInvoice(${id})">X</button></td>
+            </tr>`;
+        
+        archiveCount++;
+        document.getElementById('count').innerText = archiveCount;
+    }
+
+    function deleteInvoice(id) {
+        if(!confirm("حذف هذه الفاتورة؟")) return;
+        const row = document.querySelector(`tr[data-id="${id}"]`);
+        if(row) row.remove();
+        const ticket = document.querySelector(`.saved-ticket[data-id="${id}"]`);
+        if(ticket) ticket.remove();
+        archiveCount--;
+        document.getElementById('count').innerText = archiveCount;
+    }
+
+    function clearCurrentForm() {
+        document.getElementById('lens-price').value = "";
+        document.getElementById('install-price').value = "";
+        document.getElementById('total-price').value = "0";
+        document.getElementById('inv-num').value = "";
+        document.querySelectorAll('.diopter-select').forEach(s => s.selectedIndex = 24);
+    }
+
+    function printDailyReport() {
+        if (archiveCount === 0) return alert("لا توجد فواتير اليوم!");
+        document.body.classList.add('printing-report');
+        window.print();
+        document.body.classList.remove('printing-report');
+    }
+
+    function clearArchive() {
+        if(confirm("مسح السجل؟")) {
+            document.getElementById('hidden-print-area').innerHTML = "";
+            document.getElementById('summary-body').innerHTML = "";
+            archiveCount = 0;
+            document.getElementById('count').innerText = "0";
+        }
+    }
+
     function toggleLanguage() {
         currentLang = currentLang === 'ar' ? 'en' : 'ar';
         const t = translations[currentLang];
         document.documentElement.setAttribute('dir', t.dir);
-        document.documentElement.lang = currentLang;
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
-            if (t[key]) {
-                if (key === 'print_all_btn') {
-                    const count = document.getElementById('count').innerText;
-                    el.innerHTML = `${t[key]} (<span id="count">${count}</span>)`;
-                } else {
-                    el.innerText = t[key];
-                }
+            if (key === 'print_all_btn') {
+                el.innerHTML = `${t[key]} (<span id="count">${archiveCount}</span>)`;
+            } else {
+                el.innerText = t[key];
             }
         });
         updateEmployees();
     }
 
-    window.onload = updateEmployees;
-</script>
+    function initDiopters() {
+        let opts = "";
+        for (let i = 6; i >= -6; i -= 0.25) {
+            let v = (i > 0 ? "+" : "") + i.toFixed(2);
+            opts += `<option value="${v}" ${i===0?'selected':''}>${v}</option>`;
+        }
+        document.querySelectorAll('.diopter-select').forEach(s => s.innerHTML = opts);
+    }
 
+    setInterval(() => {
+        const now = new Date();
+        document.getElementById('current-date').innerText = now.toLocaleDateString('en-GB');
+        document.getElementById('current-time').innerText = now.toLocaleTimeString('en-US', { hour12: true });
+    }, 1000);
+
+    window.onload = () => { initDiopters(); updateEmployees(); };
+</script>
 </body>
 </html>
