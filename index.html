@@ -3,417 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام نور للنظارات</title>
+    <title>نظام نور للنظارات | NOOR Opticals</title>
     <style>
-        /* ==========================================================================
-           الإعدادات العامة
-           ========================================================================== */
-        body {
-            font-family: 'Tahoma', 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
-        }
-
-        .main-container {
-            width: 80mm;
-            margin: 20px auto;
-            background: #fff;
-            padding: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            min-height: 100vh;
-        }
-
-        /* تنسيق اللوجو */
-        .logo-img {
-            max-width: 150px;
-            height: auto;
-            margin-bottom: 5px;
-        }
-
-        /* الفاتورة الحالية */
-        .ticket {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-bottom: 10px;
-            background: #fff;
-        }
-
-        /* تنسيق جدول الملخص */
-        .summary-section {
-            margin-top: 20px;
-            border-top: 2px solid #333;
-            padding-top: 10px;
-        }
+        /* الإعدادات الأساسية */
+        body { font-family: 'Tahoma', 'Arial', sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; color: #333; }
+        .main-container { width: 80mm; margin: 20px auto; background: #fff; padding: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); min-height: 100vh; }
         
-        .summary-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 11px;
-        }
+        /* الهيدر واللوجو */
+        .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 10px; }
+        .logo-img { max-width: 140px; height: auto; margin-bottom: 5px; }
+        .logo-text { font-size: 22px; font-weight: bold; display: block; letter-spacing: 1px; }
+        .sub-logo { font-size: 14px; font-weight: bold; }
+
+        /* منطقة البيانات */
+        .ticket { border: 1px solid #ddd; padding: 10px; background: #fff; }
+        .info-section { font-size: 12px; border-bottom: 1px dashed #000; padding-bottom: 8px; margin-bottom: 10px; }
+        .info-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
         
-        .summary-table th {
-            background-color: #333;
-            color: #fff;
-            padding: 5px;
-            text-align: center;
-        }
-        
-        .summary-table td {
-            border-bottom: 1px solid #ddd;
-            padding: 5px;
-            text-align: center;
-        }
-
-        .delete-btn {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-            padding: 2px 5px;
-            font-size: 10px;
-        }
-
-        /* منطقة الطباعة المخفية */
-        #hidden-print-area {
-            display: none;
-        }
-
-        .saved-ticket {
-            border-bottom: 2px dashed #000;
-            padding: 15px 0;
-            display: block;
-        }
-
-        h3, p { margin: 5px 0; color: #000; }
-        
-        .header {
-            text-align: center;
-            border-bottom: 2px solid #000;
-            padding-bottom: 10px;
-            margin-bottom: 10px;
-        }
-
-        .logo-text { font-size: 24px; font-weight: bold; display: block; }
-        .sub-logo { font-size: 14px; }
-
-        .info-section {
-            font-size: 13px;
-            margin-bottom: 10px;
-            border-bottom: 1px dashed #000;
-            padding-bottom: 5px;
-        }
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 5px;
-        }
-
-        select, input[type="number"], input[type="text"] {
-            font-family: 'Tahoma', 'Arial', sans-serif;
-            font-size: 12px;
-            border: 1px solid #ccc;
-            padding: 2px 5px;
-            border-radius: 3px;
-            background-color: #fff;
-            font-weight: bold;
-            color: #000;
-        }
-        
-        .price-input { width: 80px; text-align: center; }
-        .invoice-num-input { width: 100px; text-align: inherit; } 
-        .employee-select { width: 140px; text-align: inherit; font-weight: bold; }
-
+        /* الجداول */
         table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12px; }
-        th, td { border: 1px solid #000; padding: 5px; text-align: center; }
-        th { background-color: #eee; font-weight: bold; }
+        th, td { border: 1px solid #000; padding: 6px; text-align: center; }
+        th { background-color: #f2f2f2; font-weight: bold; }
+        
+        /* المدخلات */
+        select, input { font-family: inherit; font-size: 12px; border: 1px solid #ccc; padding: 3px; border-radius: 3px; font-weight: bold; }
+        .price-input { width: 70px; text-align: center; }
+        .total-row { border-top: 2px solid #000; padding-top: 8px; margin-top: 8px; font-weight: 900; font-size: 14px; }
 
-        .details-section { font-size: 13px; margin-top: 10px; font-weight: bold; }
-        body[dir="rtl"] .details-section { text-align: right; }
-        body[dir="ltr"] .details-section { text-align: left; }
+        /* التذييل والتوقيع */
+        .footer { margin-top: 15px; border-top: 1px dashed #000; padding-top: 10px; }
+        .signature-area { margin-top: 35px; border-bottom: 1px solid #000; width: 100%; height: 25px; position: relative; }
+        .sig-label { position: absolute; top: -20px; font-weight: bold; font-size: 12px; }
 
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
+        /* الأزرار والتحكم */
+        .controls { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; padding: 10px; background: #eee; border-radius: 5px; }
+        .btn { padding: 12px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.3s; }
+        .print-current-btn { background-color: #007bff; color: white; }
+        .print-daily-btn { background-color: #28a745; color: white; }
+        .lang-btn { background-color: #6c757d; color: white; }
+        .clear-btn { background-color: #dc3545; color: white; font-size: 11px; padding: 8px; }
 
-        .total-row {
-            border-top: 2px solid #000;
-            padding-top: 5px;
-            margin-top: 5px;
-            font-weight: 900;
-            font-size: 14px;
-        }
+        /* سجل اليوم السفل */
+        .summary-section { margin-top: 20px; border-top: 2px solid #333; }
+        .summary-table { width: 100%; font-size: 11px; }
+        .summary-table th { background: #333; color: #fff; }
 
-        .footer {
-            margin-top: 20px;
-            text-align: center;
-            font-size: 12px;
-            padding-top: 10px;
-            border-top: 1px dashed #000;
-        }
-
-        .signature-line { margin-top: 20px; display: flex; justify-content: space-between; }
-
-        /* الأزرار تحت الفاتورة */
-        .controls { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 10px; 
-            margin-top: 20px; 
-            background: #fdfdfd;
-            padding: 10px;
-            border: 1px solid #eee;
-        }
-        .btn {
-            display: block; width: 100%; padding: 12px; color: white; text-align: center;
-            border: none; cursor: pointer; font-size: 14px; border-radius: 4px;
-            font-family: 'Tahoma', sans-serif; font-weight: bold;
-        }
-        .print-current-btn { background-color: #007bff; font-size: 16px; } 
-        .print-daily-btn { background-color: #28a745; } 
-        .clear-btn { background-color: #dc3545; font-size: 12px; padding: 8px; }
-        .lang-btn { background-color: #6c757d; font-size: 12px; padding: 8px; }
-
+        /* إعدادات الطباعة */
+        #hidden-print-area { display: none; }
         @media print {
             @page { size: 80mm auto; margin: 0; }
-            body { background-color: #fff; margin: 0; }
-            .main-container { width: 100%; margin: 0; box-shadow: none; border: none; }
-            .controls, .delete-btn, .summary-section { display: none !important; } 
-            select, input { border: none !important; background: transparent !important; appearance: none; -webkit-appearance: none; }
-            body:not(.printing-report) #hidden-print-area { display: none !important; }
-            body.printing-report #current-ticket-area { display: none !important; }
-            body.printing-report #hidden-print-area { display: block !important; }
+            body { background: white; }
+            .main-container { width: 100%; box-shadow: none; padding: 5px; margin: 0; }
+            .controls, .summary-section, .delete-btn { display: none !important; }
+            select, input { border: none !important; appearance: none; -webkit-appearance: none; background: transparent; padding: 0; }
+            .ticket { border: none; }
+            .signature-area { margin-top: 45px; } /* مساحة إضافية للقلم */
         }
     </style>
 </head>
 <body>
 
 <div class="main-container">
-    
     <div id="current-ticket-area" class="ticket">
         <div class="header">
-            <img src="logo.png" alt="Noor Logo" class="logo-img" onerror="this.style.display='none'">
+            <img src="logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
             <span class="logo-text">NOOR Opticals</span>
-            <span class="sub-logo">نـــور للنظارات</span>
-            <h3 data-i18n="invoice_title">فاتورة طلب عدسات</h3>
+            <span class="sub-logo" data-i18n="sub_logo">نـــور للنظارات</span>
+            <h3 data-i18n="invoice_title" style="margin-top:10px;">فاتورة طلب عدسات</h3>
         </div>
 
         <div class="info-section">
             <div class="info-row">
                 <label data-i18n="invoice_num">رقم الفاتورة:</label>
-                <input type="text" id="inv-num" class="invoice-num-input" placeholder="0001">
+                <input type="text" id="inv-num" placeholder="...">
             </div>
-
             <div class="info-row">
                 <label data-i18n="branch">الفرع:</label>
-                <select id="branch-select" onchange="updateEmployees()" style="width: auto;">
-                    <option value="Noor 1">Noor 1</option>
-                    <option value="Noor 2">Noor 2</option>
-                    <option value="Noor 3">Noor 3</option>
-                    <option value="Noor 4">Noor 4</option>
-                </select>
+                <select id="branch-select" onchange="updateEmployees()"></select>
             </div>
             <div class="info-row">
                 <span><span data-i18n="date">التاريخ:</span> <span id="current-date"></span></span>
-                <span><span data-i18n="time">الوقت:</span> <span id="current-time">--:--:--</span></span>
+                <span><span data-i18n="time">الوقت:</span> <span id="current-time"></span></span>
             </div>
         </div>
 
         <table>
             <thead>
-                <tr>
-                    <th data-i18n="eye_header">العين</th>
-                    <th>SPH</th>
-                    <th>CYL</th>
-                </tr>
+                <tr><th data-i18n="eye_header">العين</th><th>SPH</th><th>CYL</th></tr>
             </thead>
             <tbody>
-                <tr>
-                    <td data-i18n="right_eye">R (يمين)</td>
-                    <td><select id="r-sph" class="diopter-select"></select></td>
-                    <td><select id="r-cyl" class="diopter-select"></select></td>
-                </tr>
-                <tr>
-                    <td data-i18n="left_eye">L (يسار)</td>
-                    <td><select id="l-sph" class="diopter-select"></select></td>
-                    <td><select id="l-cyl" class="diopter-select"></select></td>
-                </tr>
+                <tr><td data-i18n="right_eye">R (يمين)</td><td><select class="diopter-select"></select></td><td><select class="diopter-select"></select></td></tr>
+                <tr><td data-i18n="left_eye">L (يسار)</td><td><select class="diopter-select"></select></td><td><select class="diopter-select"></select></td></tr>
             </tbody>
         </table>
 
         <div class="details-section">
-            <div class="detail-row">
+            <div class="info-row">
                 <strong data-i18n="lens_type">نوع العدسة:</strong>
-                <select id="lens-type" class="lens-select">
-                    <option value="MC">MC (ملتي كوت)</option>
-                    <option value="Bl cut">Bl cut (بلو كت)</option>
-                    <option value="Bl cut Blue">Bl cut Blue</option>
-                    <option value="Bl cut Green">Bl cut Green</option>
-                    <option value="PGX">PGX (فوتو قري)</option>
-                    <option value="PGX Brown">PGX Brown (فوتو براون)</option>
-                    <option value="Progressive">Progressive (قريب بعيد)</option>
-                    <option value="Poly">Poly (ضد الكسر)</option>
-                    <option value="CR39">CR39 (نورمل)</option>
-                    <option value="Fitting Color">تركيب ملون</option>
-                    <option value="Rimless Color">تركيب تلوين بدون اطار</option>
-                    <option value="Half Rim Color">تركيب وتلوين نص اطار</option>
-                    <option value="Fitting">تركيب فقط (Installation Only)</option>
-                </select>
+                <select id="lens-type" style="width: 150px;"></select>
             </div>
-            
-            <div class="detail-row">
+            <div class="info-row">
                 <strong data-i18n="lens_price">سعر العدسة:</strong>
-                <input type="number" id="lens-price" class="price-input" placeholder="0" oninput="calculateTotal()">
+                <input type="number" id="lens-price" class="price-input" oninput="calculateTotal()">
             </div>
-            
-            <div class="detail-row">
+            <div class="info-row">
                 <strong data-i18n="install_price">سعر التركيب:</strong>
-                <input type="number" id="install-price" class="price-input" placeholder="0" oninput="calculateTotal()">
+                <input type="number" id="install-price" class="price-input" oninput="calculateTotal()">
             </div>
-
-            <div class="detail-row total-row">
+            <div class="info-row total-row">
                 <strong data-i18n="total">الإجمالي:</strong>
-                <input type="text" id="total-price" class="price-input" value="0" readonly>
+                <input type="text" id="total-price" class="price-input" readonly>
             </div>
         </div>
 
         <div class="footer">
             <div class="info-row">
-                <strong data-i18n="employee">اسم الموظف:</strong>
-                <select id="emp-select" class="employee-select"></select>
+                <strong data-i18n="employee">الموظف:</strong>
+                <select id="emp-select"></select>
             </div>
-            <div class="signature-line">
-                <strong data-i18n="signature">التوقيع:</strong>
-                <span>.........................</span>
+            <div class="signature-area">
+                <span class="sig-label" data-i18n="signature">التوقيع:</span>
             </div>
-            <p style="margin-top: 15px;" data-i18n="thanks">شكراً لزيارتكم</p>
         </div>
     </div>
 
     <div class="controls">
-        <button class="btn print-current-btn" onclick="printAndSave()">🖨️ طباعة وحفظ الفاتورة</button>
+        <button class="btn print-current-btn" onclick="printAndSave()" data-i18n="btn_print">🖨️ طباعة وحفظ الفاتورة</button>
         <div style="display: flex; gap: 5px;">
-            <button class="btn print-daily-btn" onclick="printDailyReport()" data-i18n="print_all_btn">📑 طباعة التقرير اليومي (<span id="count">0</span>)</button>
-            <button class="btn lang-btn" onclick="toggleLanguage()">EN/AR</button>
+            <button class="btn print-daily-btn" style="flex:2" onclick="printDailyReport()" data-i18n="btn_report">📑 التقرير اليومي</button>
+            <button class="btn lang-btn" style="flex:1" onclick="toggleLanguage()">EN/AR</button>
         </div>
-        <button class="btn clear-btn" onclick="clearArchive()" data-i18n="clear_btn">⚠️ مسح السجل (يوم جديد)</button>
+        <button class="btn clear-btn" onclick="clearArchive()" data-i18n="btn_clear">⚠️ مسح سجل اليوم</button>
     </div>
 
     <div class="summary-section">
-        <h4 style="text-align: center;">سجل اليوم (Daily Log)</h4>
+        <h4 style="text-align: center; margin: 10px 0;" data-i18n="daily_log">سجل اليوم</h4>
         <table class="summary-table">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>الفاتورة</th>
-                    <th>الوقت</th>
-                    <th>السعر</th>
-                    <th>حذف</th>
+                    <th data-i18n="t_id">#</th>
+                    <th data-i18n="t_inv">الفاتورة</th>
+                    <th data-i18n="t_price">السعر</th>
+                    <th data-i18n="t_del">حذف</th>
                 </tr>
             </thead>
             <tbody id="summary-body"></tbody>
         </table>
     </div>
-
-    <div id="hidden-print-area"></div>
 </div>
 
+<div id="hidden-print-area"></div>
+
 <script>
+    // بيانات النظام
     const employeesData = {
-        "Noor 1": ["عمر", "سيد", "مهدي", "عبدالله الزهراني"],
-        "Noor 2": ["زبير", "فواز زهراني"], 
-        "Noor 3": ["زبير", "عبدالله الزهراني"],
-        "Noor 4": ["سهيل"]
+        "ar": { "Noor 1": ["عمر", "سيد", "مهدي", "عبدالله"], "Noor 2": ["زبير", "فواز"], "Noor 3": ["زبير", "عبدالله"], "Noor 4": ["سهيل"] },
+        "en": { "Noor 1": ["Omar", "Said", "Mahdi", "Abdullah"], "Noor 2": ["Zubair", "Fawaz"], "Noor 3": ["Zubair", "Abdullah"], "Noor 4": ["Suhail"] }
     };
 
-    let archiveCount = 0;
-    const translations = {
-        ar: {
-            dir: "rtl",
-            print_all_btn: "📑 طباعة التقرير اليومي",
-            clear_btn: "⚠️ مسح السجل (يوم جديد)",
-            invoice_title: "فاتورة طلب عدسات",
-            invoice_num: "رقم الفاتورة:",
-            branch: "الفرع:",
-            date: "التاريخ:",
-            time: "الوقت:",
-            eye_header: "العين",
-            right_eye: "R (يمين)",
-            left_eye: "L (يسار)",
-            lens_type: "نوع العدسة:",
-            lens_price: "سعر العدسة:",
-            install_price: "سعر التركيب:",
-            total: "الإجمالي:",
-            employee: "اسم الموظف:",
-            signature: "التوقيع:",
-            thanks: "شكراً لزيارتكم"
-        },
-        en: {
-            dir: "ltr",
-            print_all_btn: "📑 Print Daily Report",
-            clear_btn: "⚠️ Clear Log (New Day)",
-            invoice_title: "Lens Order Invoice",
-            invoice_num: "Invoice No:",
-            branch: "Branch:",
-            date: "Date:",
-            time: "Time:",
-            eye_header: "Eye",
-            right_eye: "R (Right)",
-            left_eye: "L (Left)",
-            lens_type: "Lens Type:",
-            lens_price: "Lens Price:",
-            install_price: "Install Price:",
-            total: "Total:",
-            employee: "Employee:",
-            signature: "Signature:",
-            thanks: "Thank You for Visiting"
-        }
+    const lensOptions = {
+        "ar": ["ملتي كوت (MC)", "بلو كت (Bl cut)", "بلو كت أزرق", "بلو كت أخضر", "فوتو قري (PGX)", "فوتو براون", "بروقريسيف", "بولي (ضد الكسر)", "نورمل (CR39)", "تركيب إطار كامل", "تركيب نص إطار", "تركيب ريملس كامل", "تركيب إطار كامل مع تلوين", "تركيب نص إطار مع تلوين", "تركيب ريملس مع تلوين", "تركيب فقط"],
+        "en": ["MC", "Bl cut", "Bl cut Blue", "Bl cut Green", "PGX", "PGX Brown", "Progressive", "Poly", "CR39", "Full Frame Fitting", "Half Frame Fitting", "Full Rimless Fitting", "Full Frame + Tint", "Half Frame + Tint", "Rimless + Tint", "Fitting Only"]
     };
+
+    const translations = {
+        ar: { sub_logo: "نـــور للنظارات", invoice_title: "فاتورة طلب عدسات", invoice_num: "رقم الفاتورة:", branch: "الفرع:", date: "التاريخ:", time: "الوقت:", eye_header: "العين", right_eye: "R (يمين)", left_eye: "L (يسار)", lens_type: "نوع العدسة:", lens_price: "سعر العدسة:", install_price: "سعر التركيب:", total: "الإجمالي:", employee: "الموظف:", signature: "التوقيع:", btn_print: "🖨️ طباعة وحفظ الفاتورة", btn_report: "📑 التقرير اليومي", btn_clear: "⚠️ مسح السجل", daily_log: "سجل مبيعات اليوم", t_id: "#", t_inv: "الفاتورة", t_price: "السعر", t_del: "حذف" },
+        en: { sub_logo: "NOOR Opticals", invoice_title: "Lens Order Invoice", invoice_num: "Invoice No:", branch: "Branch:", date: "Date:", time: "Time:", eye_header: "Eye", right_eye: "R (Right)", left_eye: "L (Left)", lens_type: "Lens Type:", lens_price: "Lens Price:", install_price: "Fitting Fee:", total: "Total:", employee: "Staff:", signature: "Signature:", btn_print: "🖨️ Print & Save", btn_report: "📑 Daily Report", btn_clear: "⚠️ Clear Day", daily_log: "Daily Log", t_id: "#", t_inv: "Inv", t_price: "Price", t_del: "Del" }
+    };
+
     let currentLang = 'ar';
+    let archiveCount = 0;
+
+    // تبديل اللغة
+    function toggleLanguage() {
+        currentLang = currentLang === 'ar' ? 'en' : 'ar';
+        const t = translations[currentLang];
+        document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+        
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            el.innerText = t[key];
+        });
+        updateDropdowns();
+    }
+
+    function updateDropdowns() {
+        const branchSelect = document.getElementById('branch-select');
+        branchSelect.innerHTML = ["Noor 1", "Noor 2", "Noor 3", "Noor 4"].map(b => `<option value="${b}">${b}</option>`).join('');
+        
+        const lensSelect = document.getElementById('lens-type');
+        lensSelect.innerHTML = lensOptions[currentLang].map(l => `<option value="${l}">${l}</option>`).join('');
+        updateEmployees();
+    }
 
     function updateEmployees() {
-        const branchSelect = document.getElementById('branch-select');
+        const branch = document.getElementById('branch-select').value;
         const empSelect = document.getElementById('emp-select');
-        const names = employeesData[branchSelect.value] || [];
-        empSelect.innerHTML = "";
-        names.forEach(name => {
-            const opt = document.createElement('option');
-            opt.value = name; opt.text = name; empSelect.appendChild(opt);
-        });
+        const names = employeesData[currentLang][branch] || [];
+        empSelect.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
     }
 
     function calculateTotal() {
         const lp = parseFloat(document.getElementById('lens-price').value) || 0;
         const ip = parseFloat(document.getElementById('install-price').value) || 0;
-        document.getElementById('total-price').value = lp + ip;
+        document.getElementById('total-price').value = (lp + ip).toFixed(2);
     }
 
     function printAndSave() {
-        saveTicketToArchive();
+        saveToArchive();
         window.print();
-        setTimeout(clearCurrentForm, 1000);
+        // تصفير بعد الحفظ
+        setTimeout(() => {
+            document.getElementById('lens-price').value = "";
+            document.getElementById('install-price').value = "";
+            document.getElementById('total-price').value = "";
+            document.getElementById('inv-num').value = "";
+        }, 1000);
     }
 
-    function saveTicketToArchive() {
-        const area = document.getElementById('current-ticket-area');
-        const hidden = document.getElementById('hidden-print-area');
-        const summary = document.getElementById('summary-body');
-        const invNum = document.getElementById('inv-num').value || "-";
-        const total = document.getElementById('total-price').value;
-        const time = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute:'2-digit' });
+    function saveToArchive() {
         const id = Date.now();
-
+        const area = document.getElementById('current-ticket-area');
         const clone = area.cloneNode(true);
-        clone.removeAttribute('id');
         clone.classList.add('saved-ticket');
         clone.setAttribute('data-id', id);
 
+        // تحويل الاختيارات إلى نصوص ثابتة للطباعة
         clone.querySelectorAll('input, select').forEach(el => {
             const span = document.createElement('span');
             span.style.fontWeight = "bold";
@@ -421,85 +236,58 @@
             el.parentNode.replaceChild(span, el);
         });
 
-        hidden.appendChild(clone);
-        summary.innerHTML += `
-            <tr data-id="${id}">
-                <td>${archiveCount + 1}</td>
-                <td>${invNum}</td>
-                <td>${time}</td>
-                <td>${total}</td>
-                <td><button class="delete-btn" onclick="deleteInvoice(${id})">X</button></td>
-            </tr>`;
+        document.getElementById('hidden-print-area').appendChild(clone);
         
-        archiveCount++;
-        document.getElementById('count').innerText = archiveCount;
+        // إضافة للصفحة الرئيسية (الملخص)
+        const summary = document.getElementById('summary-body');
+        const row = document.createElement('tr');
+        row.setAttribute('data-id', id);
+        row.innerHTML = `
+            <td>${++archiveCount}</td>
+            <td>${document.getElementById('inv-num').value || '-'}</td>
+            <td>${document.getElementById('total-price').value || '0'}</td>
+            <td><button class="delete-btn" style="color:red; border:none; background:none; cursor:pointer;" onclick="deleteRecord(${id})">✖</button></td>
+        `;
+        summary.appendChild(row);
     }
 
-    function deleteInvoice(id) {
+    function deleteRecord(id) {
         if(!confirm("حذف هذه الفاتورة؟")) return;
-        const row = document.querySelector(`tr[data-id="${id}"]`);
-        if(row) row.remove();
-        const ticket = document.querySelector(`.saved-ticket[data-id="${id}"]`);
-        if(ticket) ticket.remove();
-        archiveCount--;
-        document.getElementById('count').innerText = archiveCount;
-    }
-
-    function clearCurrentForm() {
-        document.getElementById('lens-price').value = "";
-        document.getElementById('install-price').value = "";
-        document.getElementById('total-price').value = "0";
-        document.getElementById('inv-num').value = "";
-        document.querySelectorAll('.diopter-select').forEach(s => s.selectedIndex = 24);
+        document.querySelector(`tr[data-id="${id}"]`).remove();
+        document.querySelector(`.saved-ticket[data-id="${id}"]`).remove();
     }
 
     function printDailyReport() {
-        if (archiveCount === 0) return alert("لا توجد فواتير اليوم!");
+        if(archiveCount === 0) return alert("السجل فارغ!");
         document.body.classList.add('printing-report');
         window.print();
         document.body.classList.remove('printing-report');
     }
 
     function clearArchive() {
-        if(confirm("مسح السجل؟")) {
-            document.getElementById('hidden-print-area').innerHTML = "";
-            document.getElementById('summary-body').innerHTML = "";
-            archiveCount = 0;
-            document.getElementById('count').innerText = "0";
-        }
+        if(confirm("هل تريد مسح جميع بيانات اليوم؟")) location.reload();
     }
 
-    function toggleLanguage() {
-        currentLang = currentLang === 'ar' ? 'en' : 'ar';
-        const t = translations[currentLang];
-        document.documentElement.setAttribute('dir', t.dir);
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-            const key = el.getAttribute('data-i18n');
-            if (key === 'print_all_btn') {
-                el.innerHTML = `${t[key]} (<span id="count">${archiveCount}</span>)`;
-            } else {
-                el.innerText = t[key];
-            }
-        });
-        updateEmployees();
-    }
-
-    function initDiopters() {
+    // تشغيل عند التحميل
+    window.onload = () => {
+        // إنشاء درجات النظر
         let opts = "";
         for (let i = 6; i >= -6; i -= 0.25) {
             let v = (i > 0 ? "+" : "") + i.toFixed(2);
             opts += `<option value="${v}" ${i===0?'selected':''}>${v}</option>`;
         }
         document.querySelectorAll('.diopter-select').forEach(s => s.innerHTML = opts);
-    }
-
-    setInterval(() => {
-        const now = new Date();
-        document.getElementById('current-date').innerText = now.toLocaleDateString('en-GB');
-        document.getElementById('current-time').innerText = now.toLocaleTimeString('en-US', { hour12: true });
-    }, 1000);
-
-    window.onload = () => { initDiopters(); updateEmployees(); };
+        
+        updateDropdowns();
+        
+        // تحديث الوقت المباشر
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('current-date').innerText = now.toLocaleDateString();
+            document.getElementById('current-time').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }, 1000);
+    };
 </script>
+
 </body>
 </html>
