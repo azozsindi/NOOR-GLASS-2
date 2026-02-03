@@ -43,7 +43,7 @@
         .lang-btn { background-color: #6c757d; color: white; }
         .clear-btn { background-color: #dc3545; color: white; font-size: 11px; padding: 8px; }
 
-        /* سجل اليوم السفل */
+        /* سجل اليوم السفلي */
         .summary-section { margin-top: 20px; border-top: 2px solid #333; }
         .summary-table { width: 100%; font-size: 11px; }
         .summary-table th { background: #333; color: #fff; }
@@ -57,7 +57,7 @@
             .controls, .summary-section, .delete-btn { display: none !important; }
             select, input { border: none !important; appearance: none; -webkit-appearance: none; background: transparent; padding: 0; }
             .ticket { border: none; }
-            .signature-area { margin-top: 45px; } /* مساحة إضافية للقلم */
+            .signature-area { margin-top: 45px; }
         }
     </style>
 </head>
@@ -100,7 +100,7 @@
         <div class="details-section">
             <div class="info-row">
                 <strong data-i18n="lens_type">نوع العدسة:</strong>
-                <select id="lens-type" style="width: 150px;"></select>
+                <select id="lens-type" style="width: 180px;"></select>
             </div>
             <div class="info-row">
                 <strong data-i18n="lens_price">سعر العدسة:</strong>
@@ -155,15 +155,28 @@
 <div id="hidden-print-area"></div>
 
 <script>
-    // بيانات النظام
+    // بيانات الموظفين حسب الفروع
     const employeesData = {
         "ar": { "Noor 1": ["عمر", "سيد", "مهدي", "عبدالله"], "Noor 2": ["زبير", "فواز"], "Noor 3": ["زبير", "عبدالله"], "Noor 4": ["سهيل"] },
         "en": { "Noor 1": ["Omar", "Said", "Mahdi", "Abdullah"], "Noor 2": ["Zubair", "Fawaz"], "Noor 3": ["Zubair", "Abdullah"], "Noor 4": ["Suhail"] }
     };
 
+    // قائمة العدسات والخدمات الجديدة
     const lensOptions = {
-        "ar": ["ملتي كوت (MC)", "بلو كت (Bl cut)", "بلو كت أزرق", "بلو كت أخضر", "فوتو قري (PGX)", "فوتو براون", "بروقريسيف", "بولي (ضد الكسر)", "نورمل (CR39)", "تركيب إطار كامل", "تركيب نص إطار", "تركيب ريملس كامل", "تركيب إطار كامل مع تلوين", "تركيب نص إطار مع تلوين", "تركيب ريملس مع تلوين", "تركيب فقط"],
-        "en": ["MC", "Bl cut", "Bl cut Blue", "Bl cut Green", "PGX", "PGX Brown", "Progressive", "Poly", "CR39", "Full Frame Fitting", "Half Frame Fitting", "Full Rimless Fitting", "Full Frame + Tint", "Half Frame + Tint", "Rimless + Tint", "Fitting Only"]
+        "ar": [
+            "ملتي كوت (MC)", "بلو كات (BL CUT)", "بلو كات بلو (BL CUT BLUE)", "قرين (GREEN)", 
+            "قرين بلو (GREEN BLUE)", "فوتو قري (PGX)", "فوتو براون (PGX BROWN)", 
+            "قريب / بعيد (PROGRESSIVE)", "ضد الكسر (POLY)", "نورمل (CR39)", 
+            "ملتي كوت 1.61 (MC 1.61)", "ملتي كوت 1.67 (MC 1.67)", "تركيب إطار كامل", 
+            "تركيب نص إطار", "تركيب ريملس", "نقل عدسات إطار كامل", "نقل عدسات نص إطار", 
+            "نقل عدسات ريملس", "تركيب إطار كامل مع تلوين", "تركيب نص إطار مع تلوين", "تركيب ريملس مع تلوين"
+        ],
+        "en": [
+            "Multi-Coat (MC)", "BL CUT", "BL CUT BLUE", "GREEN", "GREEN BLUE", "Photo Grey (PGX)", 
+            "Photo Brown (PGX BROWN)", "PROGRESSIVE", "POLY", "CR39", "MC 1.61", "MC 1.67", 
+            "Full Frame Fitting", "Half Frame Fitting", "Rimless Fitting", "Transfer (Full Frame)", 
+            "Transfer (Half Frame)", "Transfer (Rimless)", "Full Frame + Tint", "Half Frame + Tint", "Rimless + Tint"
+        ]
     };
 
     const translations = {
@@ -174,7 +187,6 @@
     let currentLang = 'ar';
     let archiveCount = 0;
 
-    // تبديل اللغة
     function toggleLanguage() {
         currentLang = currentLang === 'ar' ? 'en' : 'ar';
         const t = translations[currentLang];
@@ -212,7 +224,6 @@
     function printAndSave() {
         saveToArchive();
         window.print();
-        // تصفير بعد الحفظ
         setTimeout(() => {
             document.getElementById('lens-price').value = "";
             document.getElementById('install-price').value = "";
@@ -228,7 +239,6 @@
         clone.classList.add('saved-ticket');
         clone.setAttribute('data-id', id);
 
-        // تحويل الاختيارات إلى نصوص ثابتة للطباعة
         clone.querySelectorAll('input, select').forEach(el => {
             const span = document.createElement('span');
             span.style.fontWeight = "bold";
@@ -238,7 +248,6 @@
 
         document.getElementById('hidden-print-area').appendChild(clone);
         
-        // إضافة للصفحة الرئيسية (الملخص)
         const summary = document.getElementById('summary-body');
         const row = document.createElement('tr');
         row.setAttribute('data-id', id);
@@ -259,18 +268,14 @@
 
     function printDailyReport() {
         if(archiveCount === 0) return alert("السجل فارغ!");
-        document.body.classList.add('printing-report');
         window.print();
-        document.body.classList.remove('printing-report');
     }
 
     function clearArchive() {
         if(confirm("هل تريد مسح جميع بيانات اليوم؟")) location.reload();
     }
 
-    // تشغيل عند التحميل
     window.onload = () => {
-        // إنشاء درجات النظر
         let opts = "";
         for (let i = 6; i >= -6; i -= 0.25) {
             let v = (i > 0 ? "+" : "") + i.toFixed(2);
@@ -280,11 +285,10 @@
         
         updateDropdowns();
         
-        // تحديث الوقت المباشر
         setInterval(() => {
             const now = new Date();
-            document.getElementById('current-date').innerText = now.toLocaleDateString();
-            document.getElementById('current-time').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            document.getElementById('current-date').innerText = now.toLocaleDateString('ar-EG');
+            document.getElementById('current-time').innerText = now.toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'});
         }, 1000);
     };
 </script>
